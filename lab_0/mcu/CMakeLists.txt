@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 3.13)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
+set(PICO_BOARD pico_w)
 
 # initalize pico_sdk from installed location
 # (note this can come from environment, CMake cache etc)
@@ -31,7 +32,7 @@ pico_enable_stdio_uart(main 1)
 pico_enable_stdio_usb(main 1)
 
 # Add the standard library to the build
-target_link_libraries(main pico_stdlib)
+target_link_libraries(main pico_stdlib pico_cyw43_arch_none)
 
 pico_add_extra_outputs(main)
 
