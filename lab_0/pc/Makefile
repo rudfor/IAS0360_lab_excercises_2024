@@ -1,6 +1,6 @@
 BIN = lab0
 CC = g++
-SRC = lab.cpp AnyLib.cpp
+SRC = lab0.cpp AnyLib.cpp
 
 all: $(BIN)
 $(BIN): $(SRC)
