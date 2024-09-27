@@ -41,6 +41,15 @@ public:
     void vectorReLU(std::vector<double>& inputVector, std::vector<double>& outputVector);
     void vectorSigmoid(std::vector<double>& inputVector, std::vector<double>& outputVector);
 
+    // Print a 2D matrix
+    void printMatrix(int rows, int cols, const std::vector<std::vector<double>>& matrix);
+
+    // Compute cost for logistic regression
+    double computeCost(int m, const std::vector<std::vector<double>>& yhat, const std::vector<std::vector<double>>& y);
+
+    // Normalize a 2D matrix
+    int normalizeData2D(const std::vector<std::vector<double>>& inputMatrix, std::vector<std::vector<double>>& outputMatrix);
+
     // Save network
     void saveNetwork(const std::string& filename, int numOfFeatures, int numOfHiddenNodes, int numOfOutputNodes,
                      std::vector<std::vector<double>>& inputToHiddenWeights, std::vector<double>& hiddenLayerBias,
