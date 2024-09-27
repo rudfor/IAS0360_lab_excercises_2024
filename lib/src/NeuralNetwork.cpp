@@ -60,6 +60,24 @@ double NeuralNetwork::sigmoid(double x)
     return 0;
 }
 
+double sigmoid(double x) 
+{
+    return 0;
+}
+
+double sigmoidDerivative(double x) 
+{
+    return 0;
+}
+
+void NeuralNetwork::backpropagation(const std::vector<double>& input, const std::vector<double>& expectedOutput,
+                                    std::vector<std::vector<double>>& inputToHiddenWeights, std::vector<double>& hiddenBiases,
+                                    std::vector<std::vector<double>>& hiddenToOutputWeights, std::vector<double>& outputBiases,
+                                    double learningRate, int epochs) 
+{
+    return;
+}
+
 void NeuralNetwork::vectorReLU(std::vector<double>& inputVector, std::vector<double>& outputVector) 
 {
     return;

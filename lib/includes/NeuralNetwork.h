@@ -30,8 +30,15 @@ public:
     // Root Mean Squared Error (RMSE)
     double calculateRMSE(double mse);
 
-    // Brute-force learning
+    // Brute-force learning to find the best weight
     void bruteForceLearning(double input, double& weight, double expectedValue, double learningRate, int maxEpochs);
+
+    // Backpropagation learning function
+    void backpropagation(const std::vector<double>& input, const std::vector<double>& expectedOutput, 
+                     std::vector<std::vector<double>>& inputToHiddenWeights, std::vector<double>& hiddenBiases,
+                     std::vector<std::vector<double>>& hiddenToOutputWeights, std::vector<double>& outputBiases,
+                     double learningRate, int epochs);
+
 
     // Activation functions (ReLU and Sigmoid)
     double relu(double x);
