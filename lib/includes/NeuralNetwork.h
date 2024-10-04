@@ -39,6 +39,16 @@ public:
                      std::vector<std::vector<double>>& hiddenToOutputWeights, std::vector<double>& outputBiases,
                      double learningRate, int epochs);
 
+    // Backpropagation learning function for two hidden layers and batch learning
+    void backpropagation2layer(const std::vector<double>& input, const std::vector<double>& expectedOutput,
+                                          std::vector<std::vector<double>>& inputToHidden1Weights, std::vector<double>& hidden1Biases,
+                                          std::vector<std::vector<double>>& hidden1ToHidden2Weights, std::vector<double>& hidden2Biases,
+                                          std::vector<double>& hidden2ToOutputWeights, double& outputBias,
+                                          double learningRate,
+                                          std::vector<std::vector<double>>& inputToHidden1WeightGradients, std::vector<double>& hidden1BiasGradients,
+                                          std::vector<std::vector<double>>& hidden1ToHidden2WeightGradients, std::vector<double>& hidden2BiasGradients,
+                                          std::vector<double>& hidden2ToOutputWeightGradients, double& outputBiasGradient);
+
 
     // Activation functions (ReLU and Sigmoid)
     double relu(double x);

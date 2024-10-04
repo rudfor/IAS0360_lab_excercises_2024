@@ -14,7 +14,8 @@ std::vector<double> hiddenLayerBias = {0, 0, 0};  // Initialize biases for the h
 std::vector<double> hiddenLayerWeightedSum(NUM_OF_HIDDEN_NODES);  // Weighted sum (z1) before applying activation function
 
 // Weights from input layer to hidden layer
-std::vector<std::vector<double>> inputToHiddenWeights = {
+std::vector<std::vector<double>> inputToHiddenWeights = 
+{
     {0.25, 0.5, 0.05},  // Weights for hidden neuron 1
     {0.8, 0.82, 0.3},   // Weights for hidden neuron 2
     {0.5, 0.45, 0.19}   // Weights for hidden neuron 3
@@ -25,7 +26,8 @@ std::vector<double> outputLayerBias = {0};  // Initialize bias for the output ne
 std::vector<double> outputLayerWeightedSum(NUM_OF_OUTPUT_NODES);  // Weighted sum (z2) before applying activation function
 
 // Weights from hidden layer to output layer
-std::vector<std::vector<double>> hiddenToOutputWeights = {
+std::vector<std::vector<double>> hiddenToOutputWeights = 
+{
     {0.48, 0.73, 0.03}  // Weights for the output neuron
 };
 
@@ -37,7 +39,8 @@ std::vector<std::vector<double>> normalizedInput(2, std::vector<double>(NUM_OF_F
 std::vector<std::vector<double>> expectedOutput = {{1}};  // Expected output (labels) for each training example
 
 // Task 1: Perform a forward pass through the network
-void task1() {
+void task1() 
+{
     NeuralNetwork nn;
 
     // Raw input features before normalization
@@ -86,7 +89,8 @@ void task1() {
 }
 
 // Task 2: Save and load the network's state
-void task2() {
+void task2() 
+{
     NeuralNetwork nn;
     const std::string filename = "network_save.txt";
 
@@ -115,6 +119,7 @@ void task2() {
 
 int main() {
     task1();
+    std::cout << "\n";
     task2();
     return 0;
 }

@@ -20,7 +20,7 @@ int main() {
     };
     std::vector<double> hiddenBiases = {0.0, 0.0, 0.0};
     std::vector<std::vector<double>> hiddenToOutputWeights = {
-        {0.3, -0.6, 0.9}
+        {0.3, -0.6, 0.9, 0.1}
     };
     std::vector<double> outputBiases = {0.0};
 
