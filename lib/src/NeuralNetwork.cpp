@@ -8,22 +8,56 @@
 
 double NeuralNetwork::singleNeuron(double input, double weight) 
 {
-    return 0;
+    return (input * weight);
 }
 
 double NeuralNetwork::multipleInputSingleOutput(std::vector<double> inputs, std::vector<double> weights, double bias) 
 {
-    return 0;
+    double output = 0;
+
+    // Calculate weighted sum of inputs and add bias
+    for (size_t i = 0; i < inputs.size(); ++i) {
+        output += NeuralNetwork::singleNeuron(inputs[i], weights[i]);
+    }
+
+    output += bias;  // Add the bias to the final result
+    return output;
 }
 
 void NeuralNetwork::singleInputMultipleOutput(double input, std::vector<double> weights, double bias, std::vector<double>& outputs) 
 {
-    return;
+    // Clear the outputs vector to avoid appending multiple times
+    outputs.clear();
+
+    // Loop through each weight and calculate the output using singleNeuron
+    for (double weight : weights) {
+        double result = singleNeuron(input, weight) + bias;  // Use the singleNeuron function and add bias
+        outputs.push_back(result);  // Store the result in the outputs vector
+    }
 }
 
 void NeuralNetwork::multipleInputMultipleOutput(std::vector<double>& inputs, std::vector<double>& weights, std::vector<double>& biases, std::vector<double>& outputs, int inputSize, int outputSize) 
 {
-    return;
+    // Clear the outputs vector to avoid appending multiple times
+    outputs.clear();
+    
+    // For each output, sum the contributions from all inputs
+    for (int outputIndex = 0; outputIndex < outputSize; ++outputIndex) {
+        double sum = 0.0;
+
+        // For each input, apply the corresponding weight for this output
+        for (int inputIndex = 0; inputIndex < inputSize; ++inputIndex) {
+            // Index into weights: weights are stored linearly for a 2D grid (flattened row-major order)
+            int weightIndex = outputIndex * inputSize + inputIndex;
+            sum += singleNeuron(inputs[inputIndex], weights[weightIndex]);
+        }
+
+        // Add the bias for this output
+        sum += biases[outputIndex];
+
+        // Store the computed output
+        outputs.push_back(sum);
+    }
 }
 
 void NeuralNetwork::hiddenLayer(std::vector<double>& inputs, std::vector<double>& hiddenWeights, std::vector<double>& hiddenBiases, std::vector<double>& hiddenOutputs, int inputSize, int hiddenSize) 

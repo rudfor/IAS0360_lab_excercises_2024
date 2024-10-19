@@ -1,12 +1,19 @@
 #include <iostream>
+#include <iomanip>  // For std::fixed and std::setprecision
 #include <vector>
 #include "../lib/includes/NeuralNetwork.h"
 
 void task1() {
     NeuralNetwork nn;
-    double input = 23, weight = -2, bias = 92;
-    double result = nn.singleNeuron(input, weight) + bias;
-    std::cout << "Single Neuron Result: " << result << "\n";
+    std::vector<double> input = {12, 23, 47};
+    std::vector<double> weight = {-3, -2, -3};
+    double result = 0;
+    double bias = 0;
+
+    for (size_t i = 0; i < input.size(); i++) {
+        result = nn.singleNeuron(input[i], weight[i]) + bias;
+        std::cout << "Single Neuron Result: " << result << "\n";
+    }
 }
 
 void task2() {
@@ -53,8 +60,10 @@ void task4() {
 
 int main() {
     task1();
-    // task2();
-    // task3();
-    // task4();
+    // Print the results using std::cout with 2 decimal precision
+    std::cout << std::fixed << std::setprecision(2);  // Set decimal precision to 2
+    task2();
+    task3();
+    task4();
     return 0;
 }
