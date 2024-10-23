@@ -46,18 +46,30 @@ GIT_BRANCH = $(subst On branch ,,$(GIT_BRANCH_OUT))
 # OBJS        := $(subst .cpp,.o,$(TEMP))
 # HEADERS     := $(wildcard inc/*.h
 
+# Define the list of tasks you want to run
+TASKS := 1 2 3 4
+
 .PHONY: test
 
 all: lab1
 
+push:
+	@git push github master
+
 # Use LAB as a variable that can be set when calling make
 build_lab%:
-	@echo -e "$(TS2_COLOR) -= Building lab_$* =- $(RESET)";	
+	@echo -e "$(TS2_COLOR)-= Building lab_$* =-$(RESET)";	
 	@make --no-print-directory -C lab_$*
 
 lab%: build_lab%
-	@echo -e "$(TS2_COLOR) -= Running lab_$* =- $(RESET)";	
-	@cd lab_$* && ./lab$*
+	@echo -e "$(TS4_COLOR)-= Running lab_$* =-$(RESET)";	
+	@#cd lab_$* && ./lab$*
+	@for task in $(TASKS); do \
+		echo -e "$(TS6_COLOR)-= Running task_$${task} =-$(RESET)"; \
+		echo -e "$(TS5_COLOR)| cd lab_$* && ./lab$* $${task} |$(RESET)"; \
+		cd lab_$* && ./lab$* -t $${task}; \
+		cd ..; \
+	 done
 
 lab_%:
 	@make lab$*
