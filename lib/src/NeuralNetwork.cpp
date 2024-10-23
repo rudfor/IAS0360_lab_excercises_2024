@@ -62,12 +62,33 @@ void NeuralNetwork::multipleInputMultipleOutput(std::vector<double>& inputs, std
 
 void NeuralNetwork::hiddenLayer(std::vector<double>& inputs, std::vector<double>& hiddenWeights, std::vector<double>& hiddenBiases, std::vector<double>& hiddenOutputs, int inputSize, int hiddenSize) 
 {
-    return;
+    for (int i = 0; i < hiddenSize; i++) {
+        double weighted_sum = 0.0;
+
+        // Calculate the weighted sum for each hidden neuron
+        for (int j = 0; j < inputSize; j++) {
+            // Use the singleNeuron function to calculate contribution of each input
+            weighted_sum += singleNeuron(inputs[j], hiddenWeights[i * inputSize + j]);
+        }
+
+        // Add bias for the hidden neuron
+        weighted_sum += hiddenBiases[i];
+
+        // Store the final output for the hidden neuron
+        hiddenOutputs[i] = weighted_sum; // You may want to apply an activation function here if needed
+    }
 }
 
-void NeuralNetwork::calculateError(std::vector<double>& predictedOutput, std::vector<double>& groundTruth, std::vector<double>& error) 
+void NeuralNetwork::calculateError(std::vector<double>& predictedOutput, std::vector<double>& groundTruth, std::vector<double>& error)
 {
-    return;
+    int size = predictedOutput.size(); // Assuming both vectors have the same size
+    error.resize(size); // Resize the error vector to hold the error values
+    for (int i = 0; i < size; i++) {
+        error[i] = pow(predictedOutput[i] - groundTruth[i], 2); // Calculate squared error
+        if(false) {
+            printf("For ground truth %.10f, predicted output is %.10f, error is %.10f\n", groundTruth[i], predictedOutput[i], error[i]);
+        }
+    }
 }
 
 double NeuralNetwork::calculateMSE(std::vector<double>& error) 
@@ -81,7 +102,34 @@ double NeuralNetwork::calculateRMSE(double mse) {
 
 void NeuralNetwork::bruteForceLearning(double input, double& weight, double expectedValue, double learningRate, int maxEpochs) 
 {
-    return;
+    double prediction;
+    std::vector<double> predictedOutput(1); // To hold predicted output
+    std::vector<double> groundTruth(1, expectedValue); // Ground truth vector
+    std::vector<double> error(1); // To hold error values
+
+    for (int epoch = 0; epoch < maxEpochs; ++epoch) {
+        // Make a prediction using the current weight
+        prediction = singleNeuron(input, weight); // Assuming singleNeuron computes the output
+        predictedOutput[0] = prediction;
+
+        // Calculate the error using the calculateError function
+        calculateError(predictedOutput, groundTruth, error);
+        
+        // Output learning progress
+        std::cout << "Step: " << epoch
+                  << "   Error: " << error[0] 
+                  << "   Prediction: " << prediction 
+                  << "   Weight: " << weight << "\n";
+
+        // Adjust the weight using the error
+        weight -= learningRate * (prediction - expectedValue); // Simple gradient descent
+        
+        // Check for convergence (small error threshold)
+        if (std::abs(error[0]) < 0.000001) {
+            std::cout << "Error is close to zero, stopping early.\n";
+            break;
+        }
+    }
 }
 
 double NeuralNetwork::relu(double x) 

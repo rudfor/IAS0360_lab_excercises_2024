@@ -48,6 +48,9 @@ GIT_BRANCH = $(subst On branch ,,$(GIT_BRANCH_OUT))
 
 # Define the list of tasks you want to run
 TASKS := 1 2 3 4
+# Define the task lists for each lab variant
+TASKS_4 := 1 2 3 4
+TASKS_3 := 1 2 3
 
 .PHONY: test
 
@@ -64,7 +67,17 @@ build_lab%:
 lab%: build_lab%
 	@echo -e "$(TS4_COLOR)-= Running lab_$* =-$(RESET)";	
 	@#cd lab_$* && ./lab$*
-	@for task in $(TASKS); do \
+	@if [ "$*" = "1" ]; then \
+		TASKS="$(TASKS_4)"; \
+	elif [ "$*" = "2" ]; then \
+		TASKS="$(TASKS_3)"; \
+	else \
+		echo "Invalid lab number"; \
+		exit 1; \
+	fi; \
+	\
+	# Loop through tasks and run them \
+	for task in $$TASKS; do \
 		echo -e "$(TS6_COLOR)-= Running task_$${task} =-$(RESET)"; \
 		echo -e "$(TS5_COLOR)| cd lab_$* && ./lab$* $${task} |$(RESET)"; \
 		cd lab_$* && ./lab$* -t $${task}; \
@@ -108,7 +121,7 @@ test: $(ALL_TEST_RESULTS)
 	@echo -e "$(RESET)"; #//GREEN
 
 clean:
-	@/bin/rm -rf result
+	@/usr/bin/env rm lab*/lab?
 
 debug:
 	@#echo $(ALL_MODULES);
