@@ -55,7 +55,7 @@ TASKS_1 := 1
 TASKS_PARAM_EMPTY := ""
 TASKS_PARAM_LEARN := "0.4"
 
-.PHONY: test
+.PHONY: test hw hw1
 
 all: lab1
 
@@ -94,6 +94,27 @@ lab%: build_lab%
 
 lab_%:
 	@make lab$*
+
+# Default target for running HW1
+hw: hw1
+
+# Rule for running HW1 (from HW1 directory)
+hw1:
+	@echo -e "$(TS1_COLOR)-= Running HW1 =-$(RESET)"
+	@echo -e "$(TS5_COLOR)| cd HW1 && ./hw1 |$(RESET)"
+	@cd HW1 && ./hw1
+
+# General rule for running any HW% (matches HW1, HW2, etc.)
+hw%: build_hw%
+	@echo -e "$(TS6_COLOR)-= Running HW$* =-$(RESET)"
+	@echo -e "$(TS5_COLOR)| cd HW$* && ./hw$* |$(RESET)"
+	@cd HW$* && ./hw$*
+
+# Rule for building the HW% target (assuming each HW% has its own Makefile)
+build_hw%:
+	@echo -e "$(TS6_COLOR)-= Building HW$* =-$(RESET)"
+	@echo -e "$(TS5_COLOR)| make -C HW$* |$(RESET)"
+	@make -C HW$*
 
 # Special rule for lab0
 build_lab0:

@@ -30,6 +30,7 @@ int main() {
         }
         std::cout << "\n";
     }
+    
 
     // Get a sample of testing data
     auto testSample = dataset.getTestDataSample(3);

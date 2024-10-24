@@ -3,3 +3,5 @@ build
 .vscode
 lab_[0-9]/lab[0-9]
 lab_[0-9]/pc/lab[0-9]
+HW[0-9]/hw[0-9]
+docs/doxygen
