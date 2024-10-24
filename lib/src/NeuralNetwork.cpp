@@ -229,8 +229,19 @@ double NeuralNetwork::calculateRMSE(double mse) {
     return sqrt(mse);
 }
 
-void NeuralNetwork::bruteForceLearning(double input, double& weight, double expectedValue, double learningRate, int maxEpochs) 
-{
+/**
+ * @brief Performs brute force learning using a single neuron.
+ *
+ * The function iteratively updates the weight of a neuron using a gradient descent method
+ * to minimize the prediction error.
+ *
+ * @param input The input value for the neuron.
+ * @param weight The reference to the weight to be updated during learning.
+ * @param expectedValue The expected value for the neuron output.
+ * @param learningRate The learning rate for adjusting weights.
+ * @param maxEpochs The maximum number of epochs to run the learning process.
+ */
+void NeuralNetwork::bruteForceLearning(double input, double& weight, double expectedValue, double learningRate, int maxEpochs) {
     double prediction;
     std::vector<double> predictedOutput(1); // To hold predicted output
     std::vector<double> groundTruth(1, expectedValue); // Ground truth vector
@@ -250,8 +261,8 @@ void NeuralNetwork::bruteForceLearning(double input, double& weight, double expe
                   << "   Prediction: " << prediction 
                   << "   Weight: " << weight << "\n";
 
-        // Adjust the weight using the error
-        weight -= learningRate * (prediction - expectedValue); // Simple gradient descent
+        // Adjust the weight using gradient descent
+        weight -= learningRate * (prediction - expectedValue); // Gradient descent step
         
         // Check for convergence (small error threshold)
         if (std::abs(error[0]) < 0.000001) {
@@ -261,31 +272,70 @@ void NeuralNetwork::bruteForceLearning(double input, double& weight, double expe
     }
 }
 
-double NeuralNetwork::relu(double x) 
-{
-    return 0;
+/**
+ * @brief Rectified Linear Unit (ReLU) activation function.
+ *
+ * ReLU is defined as:
+ * \f[
+ * f(x) = \max(0, x)
+ * \f]
+ *
+ * @param x The input value.
+ * @return The output after applying ReLU.
+ */
+double NeuralNetwork::relu(double x) {
+    return std::max(0.0, x);
 }
 
-double NeuralNetwork::sigmoid(double x) 
-{
-    return 0;
-}
-
-double sigmoid(double x) 
-{
+/**
+ * @brief Sigmoid activation function.
+ *
+ * The sigmoid function is defined as:
+ * \f[
+ * f(x) = \frac{1}{1 + e^{-x}}
+ * \f]
+ *
+ * @param x The input value.
+ * @return The output after applying the sigmoid function.
+ */
+double NeuralNetwork::sigmoid(double x) {
     return 1.0 / (1.0 + exp(-x));
 }
 
-double sigmoidDerivative(double x) 
-{
-    return x * (1.0 - x);  // x is the output of the sigmoid function
+/**
+ * @brief Derivative of the sigmoid function.
+ *
+ * The derivative of the sigmoid function \f$f(x)\f$ is:
+ * \f[
+ * f'(x) = f(x) \cdot (1 - f(x))
+ * \f]
+ *
+ * @param x The output of the sigmoid function.
+ * @return The derivative of the sigmoid function.
+ */
+double NeuralNetwork::sigmoidDerivative(double x) {
+    return x * (1.0 - x);
 }
 
+/**
+ * @brief Backpropagation algorithm for training a neural network with one hidden layer.
+ *
+ * This function implements the backpropagation algorithm for a neural network with
+ * one hidden layer and an output layer, using the sigmoid activation function for both layers.
+ *
+ * @param input The input values for the neural network.
+ * @param expectedOutput The expected output values.
+ * @param inputToHiddenWeights Weights between the input and hidden layers.
+ * @param hiddenBiases Biases for the hidden layer.
+ * @param hiddenToOutputWeights Weights between the hidden and output layers.
+ * @param outputBiases Biases for the output layer.
+ * @param learningRate The learning rate for weight updates.
+ * @param epochs The number of epochs to run the training process.
+ */
 void NeuralNetwork::backpropagation(const std::vector<double>& input, const std::vector<double>& expectedOutput,
                                     std::vector<std::vector<double>>& inputToHiddenWeights, std::vector<double>& hiddenBiases,
                                     std::vector<std::vector<double>>& hiddenToOutputWeights, std::vector<double>& outputBiases,
-                                    double learningRate, int epochs)
-{
+                                    double learningRate, int epochs) {
     int inputSize = input.size();
     int hiddenSize = inputToHiddenWeights.size();
     int outputSize = expectedOutput.size();
@@ -301,7 +351,7 @@ void NeuralNetwork::backpropagation(const std::vector<double>& input, const std:
     };
 
     auto sigmoidDerivative = [](double x) {
-        return x * (1.0 - x);  // Derivative of sigmoid function with respect to its output
+        return x * (1.0 - x);  // Derivative of sigmoid function
     };
 
     // Training for the given number of epochs
@@ -339,7 +389,7 @@ void NeuralNetwork::backpropagation(const std::vector<double>& input, const std:
             std::cout << "Epoch " << epoch << ", Error: " << totalError << std::endl;
         }
 
-        // Step 3: Backward pass
+        // Step 3: Backward pass (backpropagation)
         // Compute the error gradient for the output layer
         for (int i = 0; i < outputSize; ++i) {
             outputError[i] *= sigmoidDerivative(finalOutput[i]);  // Gradient of the output
@@ -371,14 +421,9 @@ void NeuralNetwork::backpropagation(const std::vector<double>& input, const std:
             hiddenBiases[i] += learningRate * hiddenError[i];  // Update hidden biases
         }
     }
-
-    // // After training, print the final output
-    // std::cout << "Final output after training: " << finalOutput[0] << std::endl;
-    // std::cout << "Expected output: " << expectedOutput[0] << std::endl;
 }
 
-
-void backpropagation2layer(const std::vector<double>& input, const std::vector<double>& expectedOutput,
+void NeuralNetwork::backpropagation2layer(const std::vector<double>& input, const std::vector<double>& expectedOutput,
                                           std::vector<std::vector<double>>& inputToHidden1Weights, std::vector<double>& hidden1Biases,
                                           std::vector<std::vector<double>>& hidden1ToHidden2Weights, std::vector<double>& hidden2Biases,
                                           std::vector<double>& hidden2ToOutputWeights, double& outputBias,

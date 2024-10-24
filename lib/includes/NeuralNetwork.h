@@ -53,7 +53,8 @@ public:
     // Activation functions (ReLU and Sigmoid)
     double relu(double x);
     double sigmoid(double x);
-
+    double sigmoidDerivative(double x);
+    
     // Vectorized activation functions
     void vectorReLU(std::vector<double>& inputVector, std::vector<double>& outputVector);
     void vectorSigmoid(std::vector<double>& inputVector, std::vector<double>& outputVector);
