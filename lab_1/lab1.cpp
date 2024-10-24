@@ -1,3 +1,22 @@
+/**
+ * @file main.cpp
+ * @brief Command-line program for executing neural network tasks.
+ *
+ * This program implements different tasks related to simple neural networks, 
+ * such as single neuron output, multiple input/output operations, and assertions for validation.
+ *
+ * The tasks include:
+ * - Task 1: Single Neuron calculation using dot product.
+ * - Task 2: Multiple input single output.
+ * - Task 3: Single input multiple output.
+ * - Task 4: Multiple input multiple output.
+ *
+ * The user can run a single task, all tasks, or enable verbose mode and assertions.
+ * 
+ * @author Rudolf
+ * @date 2024
+ */
+
 #include <iostream>
 #include <iomanip>  // For std::fixed and std::setprecision
 #include <vector>
@@ -5,6 +24,11 @@
 #include <cassert>  // For assert
 #include "../lib/includes/NeuralNetwork.h"
 
+/**
+ * @brief Prints usage information for the program.
+ *
+ * Displays the command-line options available for the user.
+ */
 void print_usage() {
     std::cout << "Usage: program [options]\n"
               << "Options:\n"
@@ -15,28 +39,58 @@ void print_usage() {
               << "  -h, --help            Show this help message\n";
 }
 
-void task1(bool assert_only=false, bool verbose=false) {
+/**
+ * @brief Task 1: Single Neuron Output.
+ *
+ * This task demonstrates the operation of a simple single neuron, 
+ * calculated as a dot product of input and weights:
+ * \f[
+ * y = \sum_{i=1}^{n} x_i \cdot w_i + b
+ * \f]
+ * Where:
+ * - \f$x_i\f$ are the input values
+ * - \f$w_i\f$ are the weights
+ * - \f$b\f$ is the bias (set to 0 in this case)
+ *
+ * The task uses assertions to validate results against expected values.
+ * 
+ * @param assert_only If true, only assertions are checked without printing results.
+ * @param verbose If true, results are printed with detailed information.
+ */
+void task1(bool assert_only = false, bool verbose = false) {
     NeuralNetwork nn;
     std::vector<double> input = {12, 23, 47};
     std::vector<double> weight = {-3, -2, -3};
     double result = 0;
     double bias = 0;
 
-    // Expected results for task1 (you need to fill these in based on actual expectations)
-    std::vector<double> expectedResults = {-36, -46, -141};  // Example expected results
+    // Expected results for each input and weight (user-defined values)
+    std::vector<double> expectedResults = {-36, -46, -141};  
     
     for (size_t i = 0; i < input.size(); i++) {
         result = nn.singleNeuron(input[i], weight[i]) + bias;
         if(!assert_only) {
             std::cout << "Single Neuron Result: " << result
-                      << (verbose?(result == expectedResults[i] ? " - Pass" : " - Fail (expected " + std::to_string(expectedResults[i]) + ")"):"")
+                      << (verbose ? (result == expectedResults[i] ? " - Pass" : " - Fail (expected " + std::to_string(expectedResults[i]) + ")") : "")
                       << "\n";
         }
-        // Assertion to validate the result
+        // Validate result using assertions
         assert(result == expectedResults[i] && "Assertion failed for task1: unexpected result");
     }
 }
 
+/**
+ * @brief Task 2: Multiple Input Single Output.
+ *
+ * This task calculates the output of a single neuron with multiple inputs using the following formula:
+ * \f[
+ * y = \sum_{i=1}^{n} x_i \cdot w_i + b
+ * \f]
+ * Where:
+ * - \f$x_i\f$ are the input values (temperature, humidity, air quality)
+ * - \f$w_i\f$ are the weights
+ * - \f$b\f$ is the bias
+ */
 void task2() {
     NeuralNetwork nn;
     std::vector<double> temperature = {12, 23, 50, -10, 16};
@@ -53,6 +107,19 @@ void task2() {
     }
 }
 
+/**
+ * @brief Task 3: Single Input Multiple Output.
+ *
+ * This task demonstrates how a single input can be used to produce multiple outputs using multiple neurons.
+ * The formula for each output is:
+ * \f[
+ * y_j = x \cdot w_j + b_j \quad \text{for} \, j = 1, 2, \dots, m
+ * \f]
+ * Where:
+ * - \f$x\f$ is the single input
+ * - \f$w_j\f$ are the weights for each output neuron
+ * - \f$b_j\f$ are the biases (set to 0 in this case)
+ */
 void task3() {
     NeuralNetwork nn;
     double input = 0.9;
@@ -63,6 +130,18 @@ void task3() {
     std::cout << "Single Input Multiple Outputs Result: " << outputs[0] << ", " << outputs[1] << ", " << outputs[2] << "\n";
 }
 
+/**
+ * @brief Task 4: Multiple Input Multiple Output.
+ *
+ * This task calculates the output of multiple neurons with multiple inputs using the following formula:
+ * \f[
+ * y_j = \sum_{i=1}^{n} x_i \cdot w_{ij} + b_j \quad \text{for} \, j = 1, 2, \dots, m
+ * \f]
+ * Where:
+ * - \f$x_i\f$ are the input values
+ * - \f$w_{ij}\f$ are the weights for each output neuron and input pair
+ * - \f$b_j\f$ are the biases (set to 0 in this case)
+ */
 void task4() {
     NeuralNetwork nn;
     int inputSize = 3, outputSize = 3;
@@ -79,6 +158,16 @@ void task4() {
     std::cout << "Multiple Input Multiple Outputs Result: " << multiOutputs[0] << ", " << multiOutputs[1] << ", " << multiOutputs[2] << "\n";
 }
 
+/**
+ * @brief Main function to parse command-line arguments and execute tasks.
+ *
+ * The main function handles command-line options such as selecting a task number, running all tasks,
+ * and enabling verbose output or assertions.
+ *
+ * @param argc Number of command-line arguments.
+ * @param argv Array of command-line arguments.
+ * @return int Returns 0 on successful execution, or 1 on failure.
+ */
 int main(int argc, char* argv[]) {
     int option;
     int taskNumber = -1;
@@ -107,7 +196,7 @@ int main(int argc, char* argv[]) {
                 verbose = true;  // Set flag to run verbose
                 break;
             case 's':
-                assertion = true;  // Set flag to run regression tests
+                assertion = true;  // Set flag to run assertions
                 break;
             case 'h':
                 print_usage();

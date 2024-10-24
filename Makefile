@@ -51,6 +51,9 @@ TASKS := 1 2 3 4
 # Define the task lists for each lab variant
 TASKS_4 := 1 2 3 4
 TASKS_3 := 1 2 3
+TASKS_1 := 1
+TASKS_PARAM_EMPTY := ""
+TASKS_PARAM_LEARN := "0.4"
 
 .PHONY: test
 
@@ -69,8 +72,13 @@ lab%: build_lab%
 	@#cd lab_$* && ./lab$*
 	@if [ "$*" = "1" ]; then \
 		TASKS="$(TASKS_4)"; \
+		TASK_PARAM="$(TASKS_PARAM_EMPTY)"; \
 	elif [ "$*" = "2" ]; then \
 		TASKS="$(TASKS_3)"; \
+		TASK_PARAM="$(TASKS_PARAM_LEARN)"; \
+	elif [ "$*" = "3" ]; then \
+		TASKS="$(TASKS_1)"; \
+		TASK_PARAM="$(TASKS_PARAM_EMPTY)"; \
 	else \
 		echo "Invalid lab number"; \
 		exit 1; \
@@ -79,8 +87,8 @@ lab%: build_lab%
 	# Loop through tasks and run them \
 	for task in $$TASKS; do \
 		echo -e "$(TS6_COLOR)-= Running task_$${task} =-$(RESET)"; \
-		echo -e "$(TS5_COLOR)| cd lab_$* && ./lab$* $${task} |$(RESET)"; \
-		cd lab_$* && ./lab$* -t $${task}; \
+		echo -e "$(TS5_COLOR)| cd lab_$* && ./lab$* $${task} $$TASK_PARAM |$(RESET)"; \
+		cd lab_$* && ./lab$* -t $${task} $$TASK_PARAM; \
 		cd ..; \
 	 done
 

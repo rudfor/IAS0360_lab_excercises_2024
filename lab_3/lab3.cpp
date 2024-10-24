@@ -1,10 +1,14 @@
 #include <iostream>
+#include <iomanip>  // For std::fixed and std::setprecision
 #include <vector>
 #include <cmath>
 #include "../lib/includes/NeuralNetwork.h"
 
 int main() {
     NeuralNetwork nn;
+
+    // Print the results using std::cout with 2 decimal precision
+    std::cout << std::fixed << std::setprecision(8);  // Set decimal precision to 2
 
     // Example input (temperature, humidity, air quality)
     std::vector<double> inputVector = {30.0, 87.0, 110.0};

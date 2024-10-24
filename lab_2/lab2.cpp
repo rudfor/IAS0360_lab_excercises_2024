@@ -106,12 +106,12 @@ void task2() {
 }
 
 // Task 3: Brute force learning to adjust weight
-void task3() {
+void task3(double learningRate = 0.001, bool assert_only=false, bool verbose=false) {
     NeuralNetwork nn;
     double input = 0.5;           // Example input value
     double weight = 0.5;          // Initial weight
     double expectedValue = 0.8;   // Target (expected) output value
-    double learningRate = 0.001;  // Learning rate
+    //double learningRate = 0.001;  // Learning rate
     int maxEpochs = 1500;         // Maximum number of epochs
 
     std::cout << std::fixed << std::setprecision(6);  // Set decimal precision to 2
@@ -130,6 +130,7 @@ void task3() {
 int main(int argc, char* argv[]) {
     int option;
     int taskNumber = -1;
+    double learningRate = 0.5;
     bool runAll = false;
     bool verbose = false;
     bool assertion = false;
@@ -175,7 +176,7 @@ int main(int argc, char* argv[]) {
             switch (i) {
                 case 1: task1(assertion, verbose); break;
                 case 2: task2(); break;
-                case 3: task3(); break;
+                case 3: task3(learningRate); break;
             }
         }
         return 0;
@@ -197,7 +198,7 @@ int main(int argc, char* argv[]) {
             task2();
             break;
         case 3:
-            task3();
+            task3(learningRate);
             break;
         default:
             std::cout << "Invalid task number! Please enter a number between 1 and 3.\n";

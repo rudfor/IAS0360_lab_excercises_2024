@@ -1,16 +1,55 @@
+/**
+ * @file NeuralNetwork.cpp
+ * @brief Implementation of basic neural network operations.
+ *
+ * This file contains various functions related to neural network computations,
+ * including forward propagation, backpropagation, and weight updates.
+ */
+
 #include <iostream>
 #include <cmath>
 #include <vector>
 #include <fstream>
 #include <limits>
+#include <iomanip>  // For std::fixed and std::setprecision
 #include "../includes/NeuralNetwork.h"
 
-
+/**
+ * @brief Computes the output of a single neuron given an input and weight.
+ * 
+ * This function performs a simple multiplication between the input and weight:
+ * 
+ * \f[
+ * z = x \cdot w
+ * \f]
+ * 
+ * where \f$x\f$ is the input and \f$w\f$ is the weight.
+ * 
+ * @param input Input to the neuron.
+ * @param weight Weight associated with the input.
+ * @return The output of the neuron.
+ */
 double NeuralNetwork::singleNeuron(double input, double weight) 
 {
     return (input * weight);
 }
 
+/**
+ * @brief Computes the output for multiple inputs and weights, with a bias term.
+ * 
+ * This function computes the weighted sum of inputs and adds a bias term:
+ * 
+ * \f[
+ * z = \sum_{i=1}^{n} x_i \cdot w_i + b
+ * \f]
+ * 
+ * where \f$x_i\f$ are the inputs, \f$w_i\f$ are the weights, and \f$b\f$ is the bias.
+ * 
+ * @param inputs Vector of inputs.
+ * @param weights Vector of weights.
+ * @param bias Bias term to be added to the weighted sum.
+ * @return The output of the neuron.
+ */
 double NeuralNetwork::multipleInputSingleOutput(std::vector<double> inputs, std::vector<double> weights, double bias) 
 {
     double output = 0;
@@ -24,6 +63,23 @@ double NeuralNetwork::multipleInputSingleOutput(std::vector<double> inputs, std:
     return output;
 }
 
+/**
+ * @brief Computes the output of multiple neurons from a single input.
+ * 
+ * For each neuron, this function computes the output by multiplying the input
+ * with each corresponding weight and adding a bias:
+ * 
+ * \f[
+ * z_i = x \cdot w_i + b
+ * \f]
+ * 
+ * where \f$x\f$ is the input, \f$w_i\f$ is the weight for each neuron, and \f$b\f$ is the bias.
+ * 
+ * @param input Single input value.
+ * @param weights Vector of weights.
+ * @param bias Bias term to be added to each output.
+ * @param outputs Vector to store the outputs of the neurons.
+ */
 void NeuralNetwork::singleInputMultipleOutput(double input, std::vector<double> weights, double bias, std::vector<double>& outputs) 
 {
     // Clear the outputs vector to avoid appending multiple times
@@ -36,6 +92,25 @@ void NeuralNetwork::singleInputMultipleOutput(double input, std::vector<double> 
     }
 }
 
+/**
+ * @brief Computes the output for multiple inputs and multiple outputs.
+ * 
+ * This function calculates the weighted sum of inputs for each output neuron
+ * and adds the corresponding bias:
+ * 
+ * \f[
+ * z_j = \sum_{i=1}^{n} x_i \cdot w_{ji} + b_j
+ * \f]
+ * 
+ * where \f$x_i\f$ are the inputs, \f$w_{ji}\f$ are the weights for each output neuron, and \f$b_j\f$ is the bias for each output.
+ * 
+ * @param inputs Vector of inputs.
+ * @param weights Flattened vector of weights (stored in row-major order).
+ * @param biases Vector of biases for each output.
+ * @param outputs Vector to store the outputs.
+ * @param inputSize Number of input neurons.
+ * @param outputSize Number of output neurons.
+ */
 void NeuralNetwork::multipleInputMultipleOutput(std::vector<double>& inputs, std::vector<double>& weights, std::vector<double>& biases, std::vector<double>& outputs, int inputSize, int outputSize) 
 {
     // Clear the outputs vector to avoid appending multiple times
@@ -60,6 +135,24 @@ void NeuralNetwork::multipleInputMultipleOutput(std::vector<double>& inputs, std
     }
 }
 
+/**
+ * @brief Computes the weighted sum of inputs for a hidden layer in the neural network.
+ * 
+ * This function computes the weighted sum for each neuron in the hidden layer:
+ * 
+ * \f[
+ * z_i = \sum_{j=1}^{n} x_j \cdot w_{ij} + b_i
+ * \f]
+ * 
+ * where \f$x_j\f$ are the inputs, \f$w_{ij}\f$ are the weights for each hidden neuron, and \f$b_i\f$ is the bias for each hidden neuron.
+ * 
+ * @param inputs Vector of inputs.
+ * @param hiddenWeights Flattened vector of weights for the hidden layer.
+ * @param hiddenBiases Vector of biases for the hidden layer.
+ * @param hiddenOutputs Vector to store the outputs of the hidden layer.
+ * @param inputSize Number of input neurons.
+ * @param hiddenSize Number of hidden neurons.
+ */
 void NeuralNetwork::hiddenLayer(std::vector<double>& inputs, std::vector<double>& hiddenWeights, std::vector<double>& hiddenBiases, std::vector<double>& hiddenOutputs, int inputSize, int hiddenSize) 
 {
     for (int i = 0; i < hiddenSize; i++) {
@@ -79,25 +172,61 @@ void NeuralNetwork::hiddenLayer(std::vector<double>& inputs, std::vector<double>
     }
 }
 
+/**
+ * @brief Computes the error between predicted and actual values.
+ * 
+ * This function calculates the squared error for each prediction:
+ * 
+ * \f[
+ * e_i = (y_i - \hat{y}_i)^2
+ * \f]
+ * 
+ * where \f$y_i\f$ is the ground truth and \f$\hat{y}_i\f$ is the predicted value.
+ * 
+ * @param predictedOutput Vector of predicted values.
+ * @param groundTruth Vector of ground truth values.
+ * @param error Vector to store the calculated errors.
+ */
 void NeuralNetwork::calculateError(std::vector<double>& predictedOutput, std::vector<double>& groundTruth, std::vector<double>& error)
 {
     int size = predictedOutput.size(); // Assuming both vectors have the same size
     error.resize(size); // Resize the error vector to hold the error values
     for (int i = 0; i < size; i++) {
         error[i] = pow(predictedOutput[i] - groundTruth[i], 2); // Calculate squared error
-        if(false) {
-            printf("For ground truth %.10f, predicted output is %.10f, error is %.10f\n", groundTruth[i], predictedOutput[i], error[i]);
-        }
     }
 }
 
+/**
+ * @brief Computes the Mean Squared Error (MSE) from the error vector.
+ * 
+ * \f[
+ * \text{MSE} = \frac{1}{n} \sum_{i=1}^{n} e_i
+ * \f]
+ * 
+ * @param error Vector of squared errors.
+ * @return Mean Squared Error.
+ */
 double NeuralNetwork::calculateMSE(std::vector<double>& error) 
 {
-    return 0;
+    double sum = 0.0;
+    for (double e : error) {
+        sum += e;
+    }
+    return sum / error.size();
 }
 
+/**
+ * @brief Computes the Root Mean Squared Error (RMSE) from the MSE.
+ * 
+ * \f[
+ * \text{RMSE} = \sqrt{\text{MSE}}
+ * \f]
+ * 
+ * @param mse Mean Squared Error.
+ * @return Root Mean Squared Error.
+ */
 double NeuralNetwork::calculateRMSE(double mse) {
-    return 0;
+    return sqrt(mse);
 }
 
 void NeuralNetwork::bruteForceLearning(double input, double& weight, double expectedValue, double learningRate, int maxEpochs) 
@@ -144,21 +273,110 @@ double NeuralNetwork::sigmoid(double x)
 
 double sigmoid(double x) 
 {
-    return 0;
+    return 1.0 / (1.0 + exp(-x));
 }
 
 double sigmoidDerivative(double x) 
 {
-    return 0;
+    return x * (1.0 - x);  // x is the output of the sigmoid function
 }
 
 void NeuralNetwork::backpropagation(const std::vector<double>& input, const std::vector<double>& expectedOutput,
                                     std::vector<std::vector<double>>& inputToHiddenWeights, std::vector<double>& hiddenBiases,
                                     std::vector<std::vector<double>>& hiddenToOutputWeights, std::vector<double>& outputBiases,
-                                    double learningRate, int epochs) 
+                                    double learningRate, int epochs)
 {
-    return;
+    int inputSize = input.size();
+    int hiddenSize = inputToHiddenWeights.size();
+    int outputSize = expectedOutput.size();
+
+    std::vector<double> hiddenLayerOutput(hiddenSize);
+    std::vector<double> finalOutput(outputSize);
+    std::vector<double> outputError(outputSize);
+    std::vector<double> hiddenError(hiddenSize);
+
+    // Sigmoid function and its derivative
+    auto sigmoid = [](double x) {
+        return 1.0 / (1.0 + exp(-x));
+    };
+
+    auto sigmoidDerivative = [](double x) {
+        return x * (1.0 - x);  // Derivative of sigmoid function with respect to its output
+    };
+
+    // Training for the given number of epochs
+    for (int epoch = 0; epoch < epochs; ++epoch) {
+        double totalError = 0.0;
+
+        // Step 1: Forward pass
+        // Compute the hidden layer output
+        for (int i = 0; i < hiddenSize; ++i) {
+            double z = hiddenBiases[i];
+            for (int j = 0; j < inputSize; ++j) {
+                z += input[j] * inputToHiddenWeights[i][j];
+            }
+            hiddenLayerOutput[i] = sigmoid(z);  // Apply sigmoid activation
+        }
+
+        // Compute the final output (output layer)
+        for (int i = 0; i < outputSize; ++i) {
+            double z = outputBiases[i];
+            for (int j = 0; j < hiddenSize; ++j) {
+                z += hiddenLayerOutput[j] * hiddenToOutputWeights[i][j];
+            }
+            finalOutput[i] = sigmoid(z);  // Apply sigmoid activation
+        }
+
+        // Step 2: Calculate the output error (difference between expected and predicted)
+        for (int i = 0; i < outputSize; ++i) {
+            outputError[i] = expectedOutput[i] - finalOutput[i];
+            totalError += outputError[i] * outputError[i];  // Accumulate squared error
+        }
+        totalError *= 0.5;  // Mean squared error
+
+        // Print the error at certain epochs
+        if (epoch % 100 == 0) {
+            std::cout << "Epoch " << epoch << ", Error: " << totalError << std::endl;
+        }
+
+        // Step 3: Backward pass
+        // Compute the error gradient for the output layer
+        for (int i = 0; i < outputSize; ++i) {
+            outputError[i] *= sigmoidDerivative(finalOutput[i]);  // Gradient of the output
+        }
+
+        // Compute the error gradient for the hidden layer
+        for (int i = 0; i < hiddenSize; ++i) {
+            hiddenError[i] = 0.0;
+            for (int j = 0; j < outputSize; ++j) {
+                hiddenError[i] += outputError[j] * hiddenToOutputWeights[j][i];
+            }
+            hiddenError[i] *= sigmoidDerivative(hiddenLayerOutput[i]);  // Gradient of the hidden layer
+        }
+
+        // Step 4: Update weights and biases
+        // Update weights between hidden and output layers
+        for (int i = 0; i < outputSize; ++i) {
+            for (int j = 0; j < hiddenSize; ++j) {
+                hiddenToOutputWeights[i][j] += learningRate * outputError[i] * hiddenLayerOutput[j];
+            }
+            outputBiases[i] += learningRate * outputError[i];  // Update output biases
+        }
+
+        // Update weights between input and hidden layers
+        for (int i = 0; i < hiddenSize; ++i) {
+            for (int j = 0; j < inputSize; ++j) {
+                inputToHiddenWeights[i][j] += learningRate * hiddenError[i] * input[j];
+            }
+            hiddenBiases[i] += learningRate * hiddenError[i];  // Update hidden biases
+        }
+    }
+
+    // // After training, print the final output
+    // std::cout << "Final output after training: " << finalOutput[0] << std::endl;
+    // std::cout << "Expected output: " << expectedOutput[0] << std::endl;
 }
+
 
 void backpropagation2layer(const std::vector<double>& input, const std::vector<double>& expectedOutput,
                                           std::vector<std::vector<double>>& inputToHidden1Weights, std::vector<double>& hidden1Biases,
