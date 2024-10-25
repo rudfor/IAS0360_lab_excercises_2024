@@ -4,16 +4,7 @@
 #include <getopt.h>  // For getopt
 #include <cassert>  // For assert
 #include "../lib/includes/NeuralNetwork.h"
-
-void print_usage() {
-    std::cout << "Usage: program [options]\n"
-              << "Options:\n"
-              << "  -t, --task <number>   Specify task number (1-3) to execute\n"
-              << "  -a, --all             Run all tasks (1-3)\n"
-              << "  -v, --verbose         Set verbosity\n"
-              << "  -s, --assert          Set assertion\n"
-              << "  -h, --help            Show this help message\n";
-}
+#include "../lib/includes/Common.h"
 
 // Define constants for the layer sizes
 const int OUT_LEN = 3;
@@ -75,7 +66,7 @@ void task1(bool assert_only=false, bool verbose=false) {
 }
 
 // Task 2: Compute predictions and calculate errors compared to ground truth
-void task2() {
+void task2(bool assert_only=false, bool verbose=false) {
     NeuralNetwork nn;
 
     // Step 1: Compute the hidden layer outputs
@@ -120,61 +111,21 @@ void task3(double learningRate = 0.001, bool assert_only=false, bool verbose=fal
     nn.bruteForceLearning(input, weight, expectedValue, learningRate, maxEpochs);
 }
 
-// int main() {
-//     task1();
-//     task2();
-//     // task3();
-//     return 0;
-// }
-
 int main(int argc, char* argv[]) {
-    int option;
-    int taskNumber = -1;
-    double learningRate = 0.5;
-    bool runAll = false;
-    bool verbose = false;
-    bool assertion = false;
-
-    // Define long options for getopt
-    struct option long_options[] = {
-        {"task", required_argument, 0, 't'},
-        {"all", no_argument, 0, 'a'},
-        {"help", no_argument, 0, 'h'},
-        {0, 0, 0, 0}  // End of options
-    };
-
-    // Parse command-line options
-    while ((option = getopt_long(argc, argv, "t:ahsv", long_options, nullptr)) != -1) {
-        switch (option) {
-            case 't':
-                taskNumber = std::atoi(optarg);  // Convert task number from string to int
-                break;
-            case 'a':
-                runAll = true;  // Set flag to run all tasks
-                break;
-            case 'v':
-                verbose = true;  // Set flag to run verbose
-                break;
-            case 's':
-                assertion = true;  // Set flag to run regression tests
-                break;
-            case 'h':
-                print_usage();
-                return 0;
-            default:
-                print_usage();
-                return 1;
-        }
+    Common common;
+    if (common.parse_options(argc, argv) != 0) {
+        return 1;
     }
+    double learningRate = 0.5;
 
     // Print the results using std::cout with 2 decimal precision
     std::cout << std::fixed << std::setprecision(2);  // Set decimal precision to 2
 
     // Handle the "run all tasks" option
-    if (runAll) {
+    if (common.runAll) {
         for (int i = 1; i <= 3; ++i) {
             switch (i) {
-                case 1: task1(assertion, verbose); break;
+                case 1: task1(common.assertion, common.verbose); break;
                 case 2: task2(); break;
                 case 3: task3(learningRate); break;
             }
@@ -183,22 +134,22 @@ int main(int argc, char* argv[]) {
     }
 
     // Handle single task execution
-    if (taskNumber == -1) {
+    if (common.taskNumber == -1) {
         std::cout << "Error: Task number not specified.\n";
-        print_usage();
+        common.print_usage();
         return 1;
     }
 
     // Execute the appropriate task
-    switch (taskNumber) {
+    switch (common.taskNumber) {
         case 1:
-            task1(assertion, verbose);
+            task1(common.assertion, common.verbose);
             break;
         case 2:
-            task2();
+            task2(common.assertion, common.verbose);
             break;
         case 3:
-            task3(learningRate);
+            task3(learningRate, common.assertion, common.verbose);
             break;
         default:
             std::cout << "Invalid task number! Please enter a number between 1 and 3.\n";

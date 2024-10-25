@@ -20,53 +20,49 @@
 #include <iostream>
 #include <iomanip>  // For std::fixed and std::setprecision
 #include <vector>
-#include <getopt.h>  // For getopt
 #include <cassert>  // For assert
 #include "../lib/includes/NeuralNetwork.h"
+#include "../lib/includes/Common.h"
 
 /**
- * @brief Prints usage information for the program.
+ * @brief Performs a task that tests a single neuron operation with predefined inputs and weights.
  *
- * Displays the command-line options available for the user.
- */
-void print_usage() {
-    std::cout << "Usage: program [options]\n"
-              << "Options:\n"
-              << "  -t, --task <number>   Specify task number (1-4) to execute\n"
-              << "  -a, --all             Run all tasks (1-4)\n"
-              << "  -v, --verbose         Set verbosity\n"
-              << "  -s, --assert          Set assertion\n"
-              << "  -h, --help            Show this help message\n";
-}
-
-/**
- * @brief Task 1: Single Neuron Output.
+ * This function initializes a NeuralNetwork object and tests its `singleNeuron` method.
+ * It computes the output for each input-weight pair, adds a bias, and compares the result
+ * with expected predefined results. The results are printed if `assert_only` is false.
  *
- * This task demonstrates the operation of a simple single neuron, 
- * calculated as a dot product of input and weights:
- * \f[
- * y = \sum_{i=1}^{n} x_i \cdot w_i + b
- * \f]
- * Where:
- * - \f$x_i\f$ are the input values
- * - \f$w_i\f$ are the weights
- * - \f$b\f$ is the bias (set to 0 in this case)
- *
- * The task uses assertions to validate results against expected values.
+ * The computation for each neuron can be mathematically expressed as:
  * 
- * @param assert_only If true, only assertions are checked without printing results.
- * @param verbose If true, results are printed with detailed information.
+ * \f[
+ * \text{result} = \text{neuron_output}(x_i, w_i) + b
+ * \f]
+ * 
+ * where:
+ * - \( x_i \) is the input value,
+ * - \( w_i \) is the corresponding weight, and
+ * - \( b \) is the bias term.
+ * 
+ * The expected outputs are calculated using the formula:
+ * 
+ * \f[
+ * \text{expected_output}_i = x_i \cdot w_i
+ * \f]
+ * @see NeuralNetwork::singleNeuron
+ * @param assert_only If true, only assertions will be checked without printing results.
+ * @param verbose If true, detailed output will be printed including pass/fail status.
  */
 void task1(bool assert_only = false, bool verbose = false) {
-    NeuralNetwork nn;
-    std::vector<double> input = {12, 23, 47};
-    std::vector<double> weight = {-3, -2, -3};
-    double result = 0;
-    double bias = 0;
+    NeuralNetwork nn;  // Neural network instance
+    std::vector<double> input = {12, 23, 47};  // Input values for the neuron
+    std::vector<double> weight = {-3, -2, -3};  // Weights corresponding to each input
+    double result = 0;  // Variable to store the result of neuron computation
+    double bias = 0;    // Bias term added to the result
+
 
     // Expected results for each input and weight (user-defined values)
     std::vector<double> expectedResults = {-36, -46, -141};  
     
+    // Iterate over each input-weight pair
     for (size_t i = 0; i < input.size(); i++) {
         result = nn.singleNeuron(input[i], weight[i]) + bias;
         if(!assert_only) {
@@ -90,8 +86,11 @@ void task1(bool assert_only = false, bool verbose = false) {
  * - \f$x_i\f$ are the input values (temperature, humidity, air quality)
  * - \f$w_i\f$ are the weights
  * - \f$b\f$ is the bias
+ * @see NeuralNetwork::multipleInputSingleOutput
+ * @param assert_only If true, only assertions will be checked without printing results.
+ * @param verbose If true, detailed output will be printed including pass/fail status.
  */
-void task2() {
+void task2(bool assert_only = false, bool verbose = false) {
     NeuralNetwork nn;
     std::vector<double> temperature = {12, 23, 50, -10, 16};
     std::vector<double> humidity = {60, 67, 45, 65, 63};
@@ -100,10 +99,16 @@ void task2() {
     double result = 0;
     double bias = 0;
 
+    // Expected results for each input and weight (user-defined values)
+    std::vector<double> expectedResults = {156, 135, 147, 337, 188};
+
     for (size_t i = 0; i < temperature.size(); i++) {
         std::vector<double> inputs = {temperature[i], humidity[i], airQuality[i]};
         result = nn.multipleInputSingleOutput(inputs, weights, bias);
         std::cout << "Multiple Input Single Output Result: " << result << "\n";
+
+        // Validate result using assertions
+        assert(result == expectedResults[i] && "Assertion failed for task2: unexpected result");
     }
 }
 
@@ -119,15 +124,27 @@ void task2() {
  * - \f$x\f$ is the single input
  * - \f$w_j\f$ are the weights for each output neuron
  * - \f$b_j\f$ are the biases (set to 0 in this case)
+ * @see NeuralNetwork::singleInputMultipleOutput
+ * @param assert_only If true, only assertions will be checked without printing results.
+ * @param verbose If true, detailed output will be printed including pass/fail status.
  */
-void task3() {
+void task3(bool assert_only = false, bool verbose = false) {
     NeuralNetwork nn;
     double input = 0.9;
     std::vector<double> weights = {-20.2, 95, 201.0};
     std::vector<double> outputs(3);
     double bias = 0;
+
+    // Expected results for each input and weight (user-defined values)
+    std::vector<double> expectedResults = {-18.18, 85.50, 180.90};
+
     nn.singleInputMultipleOutput(input, weights, bias, outputs);
     std::cout << "Single Input Multiple Outputs Result: " << outputs[0] << ", " << outputs[1] << ", " << outputs[2] << "\n";
+
+    for (size_t i = 0; i < expectedResults.size(); i++) {
+        // Validate result using assertions
+        assert(outputs[0] == expectedResults[0] && "Assertion failed for task3: unexpected result");
+    }
 }
 
 /**
@@ -141,8 +158,11 @@ void task3() {
  * - \f$x_i\f$ are the input values
  * - \f$w_{ij}\f$ are the weights for each output neuron and input pair
  * - \f$b_j\f$ are the biases (set to 0 in this case)
+ * @see NeuralNetwork::multipleInputMultipleOutput
+ * @param assert_only If true, only assertions will be checked without printing results.
+ * @param verbose If true, detailed output will be printed including pass/fail status.
  */
-void task4() {
+void task4(bool assert_only = false, bool verbose = false) {
     NeuralNetwork nn;
     int inputSize = 3, outputSize = 3;
     std::vector<double> inputs = {30.0, 87.0, 110.0};
@@ -154,8 +174,16 @@ void task4() {
         -0.5, 0.4, 0.9   // Weights for output 3
     };
 
+    // Expected results for each input and weight (user-defined values)
+    std::vector<double> expectedResults = {986.50, 1295.40, 118.80};
+
     nn.multipleInputMultipleOutput(inputs, multiWeights, biases, multiOutputs, inputSize, outputSize);
     std::cout << "Multiple Input Multiple Outputs Result: " << multiOutputs[0] << ", " << multiOutputs[1] << ", " << multiOutputs[2] << "\n";
+
+    for (size_t i = 0; i < expectedResults.size(); i++) {
+        // Validate result using assertions
+        assert(multiOutputs[0] == expectedResults[0] && "Assertion failed for task3: unexpected result");
+    }
 }
 
 /**
@@ -169,85 +197,51 @@ void task4() {
  * @return int Returns 0 on successful execution, or 1 on failure.
  */
 int main(int argc, char* argv[]) {
-    int option;
-    int taskNumber = -1;
-    bool runAll = false;
-    bool verbose = false;
-    bool assertion = false;
-
-    // Define long options for getopt
-    struct option long_options[] = {
-        {"task", required_argument, 0, 't'},
-        {"all", no_argument, 0, 'a'},
-        {"help", no_argument, 0, 'h'},
-        {0, 0, 0, 0}  // End of options
-    };
-
-    // Parse command-line options
-    while ((option = getopt_long(argc, argv, "t:ahsv", long_options, nullptr)) != -1) {
-        switch (option) {
-            case 't':
-                taskNumber = std::atoi(optarg);  // Convert task number from string to int
-                break;
-            case 'a':
-                runAll = true;  // Set flag to run all tasks
-                break;
-            case 'v':
-                verbose = true;  // Set flag to run verbose
-                break;
-            case 's':
-                assertion = true;  // Set flag to run assertions
-                break;
-            case 'h':
-                print_usage();
-                return 0;
-            default:
-                print_usage();
-                return 1;
-        }
+    Common common;
+    if (common.parse_options(argc, argv) != 0) {
+        return 1;
     }
 
     // Print the results using std::cout with 2 decimal precision
     std::cout << std::fixed << std::setprecision(2);  // Set decimal precision to 2
 
     // Handle the "run all tasks" option
-    if (runAll) {
+    if (common.runAll) {
         for (int i = 1; i <= 4; ++i) {
             switch (i) {
-                case 1: task1(assertion, verbose); break;
-                case 2: task2(); break;
-                case 3: task3(); break;
-                case 4: task4(); break;
+                case 1: task1(common.assertion, common.verbose); break;
+                case 2: task2(common.assertion, common.verbose); break;
+                case 3: task3(common.assertion, common.verbose); break;
+                case 4: task4(common.assertion, common.verbose); break;
             }
         }
         return 0;
     }
 
     // Handle single task execution
-    if (taskNumber == -1) {
+    if (common.taskNumber == -1) {
         std::cout << "Error: Task number not specified.\n";
-        print_usage();
+        common.print_usage();
         return 1;
     }
 
     // Execute the appropriate task
-    switch (taskNumber) {
+    switch (common.taskNumber) {
         case 1:
-            task1(assertion, verbose);
+            task1(common.assertion, common.verbose);
             break;
         case 2:
-            task2();
+            task2(common.assertion, common.verbose);
             break;
         case 3:
-            task3();
+            task3(common.assertion, common.verbose);
             break;
         case 4:
-            task4();
+            task4(common.assertion, common.verbose);
             break;
         default:
             std::cout << "Invalid task number! Please enter a number between 1 and 4.\n";
             return 1;
     }
-
     return 0;
 }

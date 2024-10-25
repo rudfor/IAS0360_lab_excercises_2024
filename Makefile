@@ -51,11 +51,12 @@ TASKS := 1 2 3 4
 # Define the task lists for each lab variant
 TASKS_4 := 1 2 3 4
 TASKS_3 := 1 2 3
+TASKS_2 := 1 2
 TASKS_1 := 1
 TASKS_PARAM_EMPTY := ""
 TASKS_PARAM_LEARN := "0.4"
 
-.PHONY: test hw hw1
+.PHONY: test
 
 all: lab1
 
@@ -79,6 +80,9 @@ lab%: build_lab%
 	elif [ "$*" = "3" ]; then \
 		TASKS="$(TASKS_1)"; \
 		TASK_PARAM="$(TASKS_PARAM_EMPTY)"; \
+	elif [ "$*" = "4" ]; then \
+		TASKS="$(TASKS_2)"; \
+		TASK_PARAM="$(TASKS_PARAM_EMPTY)"; \
 	else \
 		echo "Invalid lab number"; \
 		exit 1; \
@@ -96,13 +100,12 @@ lab_%:
 	@make lab$*
 
 # Default target for running HW1
-hw: hw1
+homework: hw1
+	@
 
-# Rule for running HW1 (from HW1 directory)
-hw1:
-	@echo -e "$(TS1_COLOR)-= Running HW1 =-$(RESET)"
-	@echo -e "$(TS5_COLOR)| cd HW1 && ./hw1 |$(RESET)"
-	@cd HW1 && ./hw1
+# Default target for running HW1
+hw: hw1
+	@
 
 # General rule for running any HW% (matches HW1, HW2, etc.)
 hw%: build_hw%
@@ -116,6 +119,7 @@ build_hw%:
 	@echo -e "$(TS5_COLOR)| make -C HW$* |$(RESET)"
 	@make -C HW$*
 
+
 # Special rule for lab0
 build_lab0:
 	@echo "Building lab_0 folder1"
@@ -124,6 +128,9 @@ build_lab0:
 lab0: build_lab0
 	@echo "Running lab_0 pc"
 	@cd lab_0/pc && ./lab0  # or whatever the executable/script is
+
+doc:
+	@doxygen
 
 test: $(ALL_TEST_RESULTS)
 	@echo -e "$(TS2_COLOR)"; #//GREEN

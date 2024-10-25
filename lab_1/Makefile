@@ -1,6 +1,6 @@
 BIN = lab1
 CC = g++
-SRC = lab1.cpp ../lib/src/NeuralNetwork.cpp
+SRC = lab1.cpp ../lib/src/NeuralNetwork.cpp ../lib/src/Common.cpp
 
 all: $(BIN)
 $(BIN): $(SRC)

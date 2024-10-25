@@ -7,8 +7,8 @@
 int main() {
     NeuralNetwork nn;
 
-    // Print the results using std::cout with 2 decimal precision
-    std::cout << std::fixed << std::setprecision(8);  // Set decimal precision to 2
+    // Print the results using std::cout with 8 decimal precision
+    std::cout << std::fixed << std::setprecision(8);  // Set decimal precision to 8
 
     // Example input (temperature, humidity, air quality)
     std::vector<double> inputVector = {30.0, 87.0, 110.0};
@@ -29,7 +29,7 @@ int main() {
     std::vector<double> outputBiases = {0.0};
 
     // Hyperparameters
-    double learningRate = 0.01;
+    double learningRate = 0.03;
     int epochs = 1000;
 
     // Perform backpropagation learning
